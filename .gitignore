@@ -1,0 +1,33 @@
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.ipr
+*.iws
+
+### Eclipse ###
+.settings/
+.classpath
+.project
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### STS ###
+.apt_generated
+.factorypath
+.settings
+.springBeans
+.sts4-cache
+
+### VS Code ###
+.vscode/
+
+### 编译目录 ###
+target/
+
+
