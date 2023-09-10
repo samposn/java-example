@@ -1,7 +1,10 @@
 package com.kapokframework;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 
+import java.io.File;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,6 +34,20 @@ public class Main {
 
         log.info("小数部分: {}", d % 1);
 
+        File file = new File("/Users/zhangweiming/sensors/abc/distinct.txt");
+
+        String fileName = "sql/dm/README.md";
+        String[] filePathArr = StringUtils.split(fileName, "/");
+        log.info("最后一个 s: {}", filePathArr[filePathArr.length - 1]);
+
+        String filePath = FilenameUtils.getFullPathNoEndSeparator(fileName);
+
+
+        log.info("文件：{}", filePath);
+
+        String difference = StringUtils.difference("/Users/zhangweiming/test/a/", "/Users/zhangweiming/test/a/b/1.txt");
+
+        log.info("difference：{}", difference);
 
     }
 
