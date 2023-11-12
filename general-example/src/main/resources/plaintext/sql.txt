@@ -1,0 +1,28 @@
+/*MSEE取利润表分摊后的6603作为收入
+  2023-08-04修改总部核算对BU的MIB PL Mapping进行批量梳理，MSEE的6603020301不再属于External Sales，转属于Customer Financing。因此，Sales(USDP)也需取消对6603020301的取数
+  */
+select bu_code,
+       short_name,
+       name_en,
+       name_ch,
+       local_currency,
+       id,
+       org_id,
+       org_name,
+       organization_id,
+       created_by,
+       creation_date,
+       last_updated_by,
+       last_update_date,
+       bat_version,
+       prepare_currency,
+       ou_id,
+       language,
+       region,
+       error_message,
+       pl_source,
+       icrm_bu_number,
+       icrm_center,
+       ledger_name,
+       '测试是否乱码' code
+  from ipln_basic_bu_info
