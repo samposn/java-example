@@ -6,7 +6,9 @@ import org.mozilla.universalchardet.UniversalDetector;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 /**
  * Main
@@ -20,12 +22,14 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        String path = Main.class.getResource("/").getPath();
-        log.info("url1 : {}", path);
+        String path = Objects.requireNonNull(Main.class.getResource("")).getPath();
+        log.info("path : {}", URLDecoder.decode(path, Charset.defaultCharset()));
 
         URL url = Main.class.getClassLoader().getResource("plaintext/sql.txt");
         if (url != null) {
-            byte[] bytes = FileUtils.readFileToByteArray(new File(url.getFile()));
+            String filePath = URLDecoder.decode(url.getPath(), Charset.defaultCharset());
+            log.info("file path : {}", filePath);
+            byte[] bytes = FileUtils.readFileToByteArray(new File(filePath));
             String charset = detect(bytes);
 //        String s = new String(bytes, Charset.forName(charset));
             log.info("Charset: {}", charset);
