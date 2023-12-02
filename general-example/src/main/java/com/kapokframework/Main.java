@@ -74,6 +74,10 @@ public class Main {
 
         log.info("{}", 0x1);
 
+        String fiscalMonth = "1";
+
+        log.info("{}", StringUtils.leftPad(fiscalMonth, 2, "0"));
+
     }
 
 }

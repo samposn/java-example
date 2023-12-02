@@ -25,34 +25,34 @@ public class Main {
         String path = Objects.requireNonNull(Main.class.getResource("")).getPath();
         log.info("path : {}", URLDecoder.decode(path, Charset.defaultCharset()));
 
-        URL url = Main.class.getClassLoader().getResource("plaintext/sql.txt");
+        URL url = Main.class.getClassLoader().getResource("plaintext/GB18030.txt");
         if (url != null) {
             String filePath = URLDecoder.decode(url.getPath(), Charset.defaultCharset());
             log.info("file path : {}", filePath);
             byte[] bytes = FileUtils.readFileToByteArray(new File(filePath));
-            String charset = detect(bytes);
-//        String s = new String(bytes, Charset.forName(charset));
+            String charset = detectCharset(bytes);
+            String s = new String(bytes, Charset.forName(charset));
             log.info("Charset: {}", charset);
             log.info("Default Charset: {}", Charset.defaultCharset());
-//        log.info("s: {}", s);
+            log.info("s: \n{}", s);
         }
 
     }
 
-    public static String detect(byte[] bytes) throws IOException {
+    public static String detectCharset(byte[] bytes) throws IOException {
         UniversalDetector detector = new UniversalDetector(null);
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
         byte[] buf = new byte[10];
         int read;
         detector.reset();
-            while ((read = byteArrayInputStream.read(buf)) > 0 && !detector.isDone()) {
-                detector.handleData(bytes, 0, read);
-            }
-            detector.dataEnd();
+        while ((read = byteArrayInputStream.read(buf)) > 0 && !detector.isDone()) {
+            detector.handleData(bytes, 0, read);
+        }
+        detector.dataEnd();
         return detector.getDetectedCharset();
     }
 
-    public static String detect(File file) throws IOException {
+    public static String detectCharset(File file) throws IOException {
         UniversalDetector detector = new UniversalDetector(null);
         try (FileInputStream fileInputStream = new FileInputStream(file)) {
             byte[] bytes = new byte[1024];
