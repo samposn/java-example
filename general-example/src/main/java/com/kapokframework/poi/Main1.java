@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.alibaba.fastjson2.TypeReference;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
@@ -26,36 +27,38 @@ public class Main1 {
 
     private static final int CHARACTER = 256;
 
-    private static final int LINE_HEIGHT = 18;
+    private static final float LINE_HEIGHT = 18.5f;
 
-    private static final String[] TITLE_1 = {"Cost Centre Code", "Cost Center Name", "Account Code", "Account Name", "Sub Account Code", "Sub Account Name", "ICP", "PD Category Code", "PD Category Name", "Channel Code", "Region Code", "PD Code", "Pd Name", "Brand Code", "Control Type"};
+    private static final String[] TITLE_1 = {"Cost Centre Code", "Cost Center Name", "Account Code", "Account Name", "Sub Account Code", "Sub Account Name", "ICP Code", "PD Category Code", "Channel Code", "Region Code", "PD Code", "PD Name", "Brand Code", "Control Type", "Budget Category"};
 
     private static final String[] TITLE_2 = {"Total", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-    private static final String[] JSONOBJECT_KEY_1 = {"costCenterCode", "costCenterName", "accountCode", "accountName", "subAccountCode", "subAccountName", "icp", "pdCategoryCode", "pdCategoryName", "channel", "regionCode", "pdCode", "pdName", "brandCode", "controlType"};
+    private static final String[] JSONOBJECT_KEY_1 = {"costCenterCode", "costCenterName", "accountCode", "accountName", "subAccountCode", "subAccountName", "icp", "pdCategoryCode", "channel", "regionCode", "pdCode", "pdName", "brandCode", "controlType", "budgetCategory"};
 
     private static final String[] JSONOBJECT_KEY_2 = {"adjAmountTotal", "adjAmountJan", "adjAmountFeb", "adjAmountMar", "adjAmountApr", "adjAmountMay", "adjAmountJun", "adjAmountJul", "adjAmountAug", "adjAmountSep", "adjAmountOct", "adjAmountNov", "adjAmountDec"};
 
-    private static final String[] JSONOBJECT_KEY_3 = {"iexpAdjustedTotal", "iexpAdjustedJan", "iexpAdjustedFeb", "iexpAdjustedMar", "iexpAdjustedApr", "iexpAdjustedMay", "iexpAdjustedJun", "iexpAdjustedJul", "iexpAdjustedAug", "iexpAdjustedSep", "iexpAdjustedOct", "iexpAdjustedNov", "iexpAdjustedDec"};
+    private static final String[] JSONOBJECT_KEY_3 = {"-", "iexpAdjustedJan", "iexpAdjustedFeb", "iexpAdjustedMar", "iexpAdjustedApr", "iexpAdjustedMay", "iexpAdjustedJun", "iexpAdjustedJul", "iexpAdjustedAug", "iexpAdjustedSep", "iexpAdjustedOct", "iexpAdjustedNov", "iexpAdjustedDec"};
+
+    private static final String[] JSONOBJECT_KEY_4 = {"-", "budCatAdjustedJan", "budCatAdjustedFeb", "budCatAdjustedMar", "budCatAdjustedApr", "budCatAdjustedMay", "budCatAdjustedJun", "budCatAdjustedJul", "budCatAdjustedAug", "budCatAdjustedSep", "budCatAdjustedOct", "budCatAdjustedNov", "budCatAdjustedDec"};
+
 
     public static void main(String[] args) throws Exception {
 
         URL url = Main1.class.getClassLoader().getResource("json/mobile_approve.json");
 
         if (url != null) {
-            List<JSONObject> jsonObjectList = JSON.parseObject(url, new TypeReference<List<JSONObject>>() {
-            }.getType());
+            List<JSONObject> jsonObjectList = JSON.parseObject(url, new TypeReference<List<JSONObject>>() {}.getType());
 
             try (XSSFWorkbook workbook = new XSSFWorkbook()) {
 
                 XSSFSheet sheet = workbook.createSheet("Sheet1");
 
-                sheet.setColumnWidth(0, 20 * CHARACTER);
-                sheet.setColumnWidth(1, 70 * CHARACTER);
-                sheet.setColumnWidth(2, 12 * CHARACTER);
-                sheet.setColumnWidth(3, 20 * CHARACTER);
-                sheet.setColumnWidth(4, 12 * CHARACTER);
-                sheet.setColumnWidth(5, 20 * CHARACTER);
+                sheet.setColumnWidth(0, 18 * CHARACTER);
+                sheet.setColumnWidth(1, 60 * CHARACTER);
+                sheet.setColumnWidth(2, 10 * CHARACTER);
+                sheet.setColumnWidth(3, 25 * CHARACTER);
+                sheet.setColumnWidth(4, 25 * CHARACTER);
+                sheet.setColumnWidth(5, 25 * CHARACTER);
 
                 // Basic Style
                 XSSFCellStyle style = workbook.createCellStyle();
@@ -101,8 +104,11 @@ public class Main1 {
 
                     JSONObject jsonObject = jsonObjectList.get(i);
 
-                    // jsonObject 中缺少 iexpAdjustedTotal，在这里设置
-                    jsonObject.put("iexpAdjustedTotal", "/");
+                    // iplnBudgetAdjustDetail 中 budgetCategory 为空时，设置值为 "/"
+                    String budgetCategory = jsonObject.getString("budgetCategory");
+                    if (StringUtils.isBlank(budgetCategory)) {
+                        jsonObject.put("budgetCategory", "/");
+                    }
 
                     XSSFRow row1 = sheet.createRow(baseRowNum);
                     row1.setHeightInPoints(LINE_HEIGHT);
@@ -119,7 +125,7 @@ public class Main1 {
 
                     IntStream.range(0, TITLE_1.length).forEach(j -> {
                         XSSFRow row = sheet.createRow(j + (baseRowNum + 1));
-                        row.setHeightInPoints(LINE_HEIGHT);
+                        row.setHeightInPoints((j == 1 ? LINE_HEIGHT * 2 : LINE_HEIGHT));
                         XSSFCell cellA = row.createCell(0);
                         cellA.setCellStyle(title_1Style);
                         cellA.setCellValue(TITLE_1[j]);
@@ -139,21 +145,34 @@ public class Main1 {
                         }
 
                         if (j == 1) {
-                            XSSFCell cellC1 = row.createCell(2);
+                            XSSFCell cellC = row.createCell(2);
                             XSSFCellStyle cell12Style = workbook.createCellStyle();
-                            cell12Style.cloneStyleFrom(title_2Style);
+                            cell12Style.cloneStyleFrom(title_1Style);
                             cell12Style.setAlignment(HorizontalAlignment.CENTER);
-                            cellC1.setCellStyle(cell12Style);
-                            cellC1.setCellValue("ADJ");
-                            MergeCell(sheet, CellRangeAddress.valueOf("C" + (baseRowNum + 3) + ":D" + (baseRowNum + 3)));
+                            cellC.setCellStyle(cell12Style);
 
-                            XSSFCell cellE1 = row.createCell(4);
+                            XSSFCell cellD = row.createCell(3);
+                            XSSFCellStyle cell13Style = workbook.createCellStyle();
+                            cell13Style.cloneStyleFrom(title_2Style);
+                            cell13Style.setAlignment(HorizontalAlignment.CENTER);
+                            cellD.setCellStyle(cell13Style);
+                            cellD.setCellValue("ADJ");
+
+                            XSSFCell cellE = row.createCell(4);
                             XSSFCellStyle cell14Style = workbook.createCellStyle();
                             cell14Style.cloneStyleFrom(title_4Style);
                             cell14Style.setAlignment(HorizontalAlignment.CENTER);
-                            cellE1.setCellStyle(cell14Style);
-                            cellE1.setCellValue("iExpense Available Budget-Adjusted");
-                            MergeCell(sheet, CellRangeAddress.valueOf("E" + (baseRowNum + 3) + ":F" + (baseRowNum + 3)));
+                            cell14Style.setWrapText(true);
+                            cellE.setCellStyle(cell14Style);
+                            cellE.setCellValue("Single COA iExpense\nAvailable Budget-Adjusted");
+
+                            XSSFCell cellF = row.createCell(5);
+                            XSSFCellStyle cell15Style = workbook.createCellStyle();
+                            cell15Style.cloneStyleFrom(title_4Style);
+                            cell15Style.setAlignment(HorizontalAlignment.CENTER);
+                            cell15Style.setWrapText(true);
+                            cellF.setCellStyle(cell15Style);
+                            cellF.setCellValue("Budget Category iExpense\nAvailable Amount - Adjusted");
                         }
 
                         if (j > 1) {
@@ -163,24 +182,28 @@ public class Main1 {
                             numStyle.setAlignment(HorizontalAlignment.RIGHT);
                             numStyle.setDataFormat(dataFormat.getFormat("#,##0.00"));
 
-                            XSSFCell cellC2 = row.createCell(2);
-                            cellC2.setCellStyle(title_2Style);
-                            cellC2.setCellValue(TITLE_2[j - 2]);
+                            XSSFCell cellC = row.createCell(2);
+                            cellC.setCellStyle(title_1Style);
+                            cellC.setCellValue(TITLE_2[j - 2]);
 
                             XSSFCell cellD = row.createCell(3);
                             cellD.setCellStyle(numStyle);
                             cellD.setCellValue(jsonObject.getDoubleValue(JSONOBJECT_KEY_2[j - 2]));
 
-                            XSSFCell cellE2 = row.createCell(4);
-                            cellE2.setCellStyle(title_4Style);
-                            cellE2.setCellValue(TITLE_2[j - 2]);
+                            XSSFCell cellE = row.createCell(4);
+                            cellE.setCellStyle(numStyle);
+                            if (j == 2) {
+                                cellE.setCellValue("/");
+                            } else {
+                                cellE.setCellValue(jsonObject.getDoubleValue(JSONOBJECT_KEY_3[j - 2]));
+                            }
 
                             XSSFCell cellF = row.createCell(5);
                             cellF.setCellStyle(numStyle);
-                            if (j == 2) {
-                                cellF.setCellValue(jsonObject.getString(JSONOBJECT_KEY_3[j - 2]));
+                            if (j == 2 || StringUtils.isBlank(budgetCategory)) {
+                                cellF.setCellValue("/");
                             } else {
-                                cellF.setCellValue(jsonObject.getDoubleValue(JSONOBJECT_KEY_3[j - 2]));
+                                cellF.setCellValue(jsonObject.getDoubleValue(JSONOBJECT_KEY_4[j - 2]));
                             }
                         }
                     });

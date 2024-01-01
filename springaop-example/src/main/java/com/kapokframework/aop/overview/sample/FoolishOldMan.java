@@ -1,4 +1,4 @@
-package com.kapokframework.aop.overview;
+package com.kapokframework.aop.overview.sample;
 
 /**
  * FoolishOldMan
@@ -10,6 +10,6 @@ public interface FoolishOldMan {
 
     String getName();
 
-    void moveMountain();
+    void moveMountain() throws NullPointerException;
 
 }

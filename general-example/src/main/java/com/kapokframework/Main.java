@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.AntPathMatcher;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.UUID;
 
 /**
  * Main
@@ -77,6 +79,10 @@ public class Main {
         String fiscalMonth = "1";
 
         log.info("{}", StringUtils.leftPad(fiscalMonth, 2, "0"));
+
+        log.info("{}", UUID.randomUUID().toString());
+
+        log.info("{}", FilenameUtils.getName("IPLN/asdf/asdf/asdf/TVCP_Actual_PL_LOCAL.xlsm"));
 
     }
 

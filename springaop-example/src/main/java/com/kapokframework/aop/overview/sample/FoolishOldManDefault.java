@@ -1,7 +1,8 @@
-package com.kapokframework.aop.overview;
+package com.kapokframework.aop.overview.sample;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -12,16 +13,17 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
+@ToString
+@SuperBuilder
 public class FoolishOldManDefault implements FoolishOldMan {
 
-    private final String name;
+    protected String name;
 
     @Override
     public void moveMountain() {
         // 模拟在挖土
         for (int i = 1; i <= 10; i++) {
-            log.info("{}正在挖土第 {} 次", this.getName(), i);
+            log.info("{}第 {} 次挖土", this.getName(), i);
         }
     }
 

@@ -77,6 +77,8 @@ public class SheetHandler extends DefaultHandler {
                 String cellStyleIndexStr = attributes.getValue("s");
                 if (cellStyleIndexStr != null) {
                     cellStyleIndex = Integer.parseInt(cellStyleIndexStr);
+                } else {
+                    cellStyleIndex = 0;
                 }
             }
             // element v represents value of Cell

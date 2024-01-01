@@ -2,6 +2,7 @@ package com.kapokframework;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
@@ -42,9 +43,8 @@ public class Test1 {
             log.info("Nothing!");
         }
 
-
-
-
+        DateTime dateTime = DateTime.parse("2024-02");
+        log.info("joda-time : {}", dateTime);
 
     }
 

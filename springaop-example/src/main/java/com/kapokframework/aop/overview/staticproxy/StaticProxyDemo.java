@@ -1,7 +1,7 @@
-package com.kapokframework.aop.overview;
+package com.kapokframework.aop.overview.staticproxy;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import com.kapokframework.aop.overview.sample.FoolishOldMan;
+import com.kapokframework.aop.overview.sample.FoolishOldManDefault;
 
 /**
  * Java AOP 代理模式，静态代理示例
@@ -13,11 +13,11 @@ public class StaticProxyDemo {
 
     public static void main(String[] args) {
         // 继承的方式
-        FoolishOldMan foolishOldManA = new FoolishOldManExtendProxy("愚公A");
+        FoolishOldMan foolishOldManA = FoolishOldManExtendProxy.builder().name("愚公A").build();
         foolishOldManA.moveMountain();
 
         // 组合的方式
-        FoolishOldMan foolishOldMan = new FoolishOldManDefault("愚公B");
+        FoolishOldMan foolishOldMan = FoolishOldManDefault.builder().name("愚公B").build();
         FoolishOldManCompositeProxy foolishOldManCompositeProxy = new FoolishOldManCompositeProxy(foolishOldMan);
         foolishOldManCompositeProxy.moveMountain();
     }

@@ -4,6 +4,7 @@ package com.kapokframework.jgit;
 import com.alibaba.fastjson2.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.internal.storage.dfs.DfsRepositoryDescription;
@@ -41,10 +42,10 @@ public class Main {
 
         requestData.put("u", args[0]);
         requestData.put("p", args[1]);
-        requestData.put("repoUrl", "https://git.midea.com/dep-it/i-plan/etl.git");
+        requestData.put("repoUrl", "https://git.midea.com/dep-it/i-plan/template.git");
         requestData.put("branch", "release/uat");
-        requestData.put("sourcePath", "IPLN/REAL_TIME/IPLN/Actual_P_L/*.*");
-        requestData.put("targetPath", "/mnt/nas/kettle-spaces/IPLN/REAL_TIME/IPLN/Actual_P_L/");
+        requestData.put("sourcePath", "IPLN/TVCP_Actual_PL_LOCAL.xlsm");
+        requestData.put("targetPath", "/mnt/nas/ipln_web/");
 
         sync(requestData);
 
@@ -88,7 +89,9 @@ public class Main {
                     continue;
                 }
 
-                String subPath = isPattern ? pathMatcher.extractPathWithinPattern(sourcePath, pathString) : StringUtils.difference(sourcePath, pathString);
+                String subPath = isPattern ? pathMatcher.extractPathWithinPattern(sourcePath, pathString) :
+                        StringUtils.equals(sourcePath, pathString) ? FilenameUtils.getName(sourcePath) :
+                        StringUtils.difference(sourcePath, pathString);
                 String filePath = pathMatcher.combine(targetPath, subPath);
 
                 log.info("{}", i++);
